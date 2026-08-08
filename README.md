@@ -71,5 +71,5 @@ If you use this code or data in your research, please cite our paper:
 
 ## Authors
 
-- Maayan Sharon
+- [Maayan Sharon](https://github.com/maayansharon10/maayansharon10)
 - [Tom Hope](https://tomhoper.github.io/)
