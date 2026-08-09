@@ -46,10 +46,9 @@ Each query is paired with a single gold candidate; the candidate corpus of each 
 | Resource | Description | Status |
 | --- | --- | --- |
 | [maayans/RATIO](https://huggingface.co/datasets/maayans/RATIO) | The full benchmark: `address` / `broaden` / `specify` query–gold pairs + shared `candidates` corpus, in the temporal train/validation/test split | 🔒 Private — public upon release |
-| ModernBERT-embed-large (fine-tuned) | Relation-specific fine-tuned checkpoints (ADDRESS / BROADEN / SPECIFY) | TODO — link coming soon |
-| all-mpnet-base-v2 (fine-tuned) | Relation-specific fine-tuned checkpoints (ADDRESS / BROADEN / SPECIFY) | TODO — link coming soon |
-| stella_en_1.5B_v5 (fine-tuned) | Relation-specific fine-tuned checkpoints (ADDRESS / BROADEN / SPECIFY) | TODO — link coming soon |
-
+| ModernBERT-embed-large (fine-tuned) | [ADDRESS](https://huggingface.co/maayans/modernbert-embed-large__ratio-address) · [BROADEN](https://huggingface.co/maayans/modernbert-embed-large__ratio-broaden) · [SPECIFY](https://huggingface.co/maayans/modernbert-embed-large__ratio-specify) | 🔒 Private — public upon release |
+| all-mpnet-base-v2 (fine-tuned) | [ADDRESS](https://huggingface.co/maayans/all-mpnet-base-v2__ratio-address) · [BROADEN](https://huggingface.co/maayans/all-mpnet-base-v2__ratio-broaden) · [SPECIFY](https://huggingface.co/maayans/all-mpnet-base-v2__ratio-specify) | 🔒 Private — public upon release |
+| stella_en_1.5B_v5 (fine-tuned) | [ADDRESS](https://huggingface.co/maayans/stella_en_1.5B_v5__ratio-address) · [BROADEN](https://huggingface.co/maayans/stella_en_1.5B_v5__ratio-broaden) · [SPECIFY](https://huggingface.co/maayans/stella_en_1.5B_v5__ratio-specify) | 🔒 Private — public upon release |
 You are welcome to use RATIO to study scientific ideation, train and evaluate retrievers, or for any other purpose. Please cite our paper as described [below](#citation).
 
 ## Citation
