@@ -49,6 +49,10 @@ Each query is paired with a single gold candidate; the candidate corpus of each 
 | ModernBERT-embed-large (fine-tuned) | [ADDRESS](https://huggingface.co/maayans/modernbert-embed-large__ratio-address) · [BROADEN](https://huggingface.co/maayans/modernbert-embed-large__ratio-broaden) · [SPECIFY](https://huggingface.co/maayans/modernbert-embed-large__ratio-specify) | 🔒 Private — public upon release |
 | all-mpnet-base-v2 (fine-tuned) | [ADDRESS](https://huggingface.co/maayans/all-mpnet-base-v2__ratio-address) · [BROADEN](https://huggingface.co/maayans/all-mpnet-base-v2__ratio-broaden) · [SPECIFY](https://huggingface.co/maayans/all-mpnet-base-v2__ratio-specify) | 🔒 Private — public upon release |
 | stella_en_1.5B_v5 (fine-tuned) | [ADDRESS](https://huggingface.co/maayans/stella_en_1.5B_v5__ratio-address) · [BROADEN](https://huggingface.co/maayans/stella_en_1.5B_v5__ratio-broaden) · [SPECIFY](https://huggingface.co/maayans/stella_en_1.5B_v5__ratio-specify) | 🔒 Private — public upon release |
+> **Input prefixes.** Each checkpoint expects the input format it was trained with:
+> `all-mpnet-base-v2` — `query: ` / `document: ` · `modernbert-embed-large` — `search_query: ` / `search_document: ` · `stella_en_1.5B_v5` — built-in `s2p_query` prompt on queries (`prompt_name="s2p_query"`), no prefix on documents.
+> See each model card for a ready-to-use snippet.
+
 You are welcome to use RATIO to study scientific ideation, train and evaluate retrievers, or for any other purpose. Please cite our paper as described [below](#citation).
 
 ## Citation
