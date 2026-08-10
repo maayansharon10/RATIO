@@ -2,7 +2,6 @@
 <html lang="en">
 <head>
   <meta charset="utf-8">
-  <!-- TODO: replace meta URLs / images once the page is deployed -->
   <meta name="description"
         content="RATIO is a large-scale benchmark for scientific inspiration retrieval, where relevance is defined by three ideation moves: ADDRESS, BROADEN, and SPECIFY.">
   <meta name="keywords"
@@ -10,15 +9,15 @@
   <meta property="og:title" content="RATIO: A Benchmark for Retrieval Across Typed Ideation Operations in Scientific Literature"/>
   <meta property="og:description"
         content="RATIO is a large-scale benchmark for scientific inspiration retrieval, where relevance is defined by three ideation moves: ADDRESS, BROADEN, and SPECIFY."/>
-  <meta property="og:url" content="https://maayansharon10.github.io/RATIO-web/"/>
-  <meta property="og:image" content="static/images/social_media_banner.png"/> <!-- TODO: create banner (1200x630) -->
+  <meta property="og:url" content="https://maayansharon10.github.io/RATIO/"/>
+  <meta property="og:image" content="https://maayansharon10.github.io/RATIO/static/images/figure1.png"/> <!-- TODO: replace with a dedicated 1200x630 banner -->
   <meta property="og:image:width" content="1200"/>
   <meta property="og:image:height" content="630"/>
   <meta name="twitter:card" content="summary_large_image">
   <meta name="twitter:title" content="RATIO: A Benchmark for Retrieval Across Typed Ideation Operations in Scientific Literature">
   <meta name="twitter:description"
         content="RATIO is a large-scale benchmark for scientific inspiration retrieval, where relevance is defined by three ideation moves: ADDRESS, BROADEN, and SPECIFY.">
-  <meta name="twitter:image" content="static/images/twitter-banner.png"> <!-- TODO -->
+  <meta name="twitter:image" content="https://maayansharon10.github.io/RATIO/static/images/figure1.png"> <!-- TODO: dedicated banner -->
   <meta name="viewport" content="width=device-width, initial-scale=1">
 
   <title>RATIO: A Benchmark for Retrieval Across Typed Ideation Operations in Scientific Literature</title>
@@ -236,11 +235,7 @@
       </div>
     </div>
 
-    <!-- TODO: export Figure 1 (teaser) as SVG/PNG and place at static/images/teaser.svg -->
-    <div class="fig-placeholder">
-      TODO: Figure 1 &mdash; teaser figure (discourse-marker supervision + human&ndash;LLM validation supporting the three ideation moves)
-      <!-- <img src="static/images/teaser.svg" alt="RATIO overview"> -->
-    </div>
+    <img src="static/images/figure1.png" alt="RATIO overview" style="width: 100%;">
     <p class="fig-caption">
       We construct <span style="font-variant: small-caps;">Ratio</span> from full-text scientific papers using
       discourse-marker supervision and human&ndash;LLM validation to support retrieval across three ideation moves:
@@ -276,13 +271,7 @@
       sentences are added to the candidate pool as hard negatives, removing pool-membership shortcuts.
     </p>
 
-    <!-- TODO: export Figure 2 (construction pipeline) and place at static/images/pipeline.svg -->
-    <div class="fig-placeholder">
-      TODO: Figure 2 &mdash; construction pipeline (1&nbsp;marker lexicon &rarr; 2&nbsp;mine transitions &rarr;
-      3&nbsp;remove marker + filter &rarr; 4&nbsp;temporal split &rarr; 5&nbsp;shared candidate corpus &rarr;
-      6&nbsp;validation: silver + top-10)
-      <!-- <img src="static/images/pipeline.svg" alt="Construction of RATIO"> -->
-    </div>
+    <img src="static/images/pipelineFINAL.png" alt="Construction of RATIO" style="width: 100%;">
     <p class="fig-caption">
       Construction of <span style="font-variant: small-caps;">Ratio</span>. Validated discourse markers identify
       ADDRESS, BROADEN, and SPECIFY transitions in full-text papers. The marker is removed from the candidate text,
@@ -433,11 +422,12 @@
       sense, rather than exploiting adjacency or other shallow shortcuts.
     </p>
 
-    <!-- TODO: optional — add the lexical-overlap figure (Figure 4) and/or the judge-decision violin figure (Figure 5) -->
-    <div class="fig-placeholder">
-      TODO (optional): analysis figures &mdash; e.g., query&ndash;candidate lexical overlap by retrieval depth
-      (tuned vs. baseline), or the top-10 candidate evaluation overlap violins
-    </div>
+    <img src="static/images/jaccard_all_groups.png" alt="Query-candidate lexical overlap by relation over retrieval depth" style="width: 100%; max-width: 640px; display: block; margin: 1.25rem auto;">
+    <p class="fig-caption">
+      Query&ndash;candidate lexical overlap by relation, over retrieval depth on the silver test set
+      (ModernBERT-embed-large). Lexical overlap is Jaccard score with unigrams, stopwords removed,
+      snowball-stemmed. Tuned retrieval pulls lower-overlap candidates than the off-the-shelf baseline.
+    </p>
 
   </div>
 </section>
