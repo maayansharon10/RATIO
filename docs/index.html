@@ -1,0 +1,483 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <!-- TODO: replace meta URLs / images once the page is deployed -->
+  <meta name="description"
+        content="RATIO is a large-scale benchmark for scientific inspiration retrieval, where relevance is defined by three ideation moves: ADDRESS, BROADEN, and SPECIFY.">
+  <meta name="keywords"
+        content="scientific inspiration retrieval, ideation, information retrieval, benchmark, discourse markers, distant supervision, scientific literature, RATIO">
+  <meta property="og:title" content="RATIO: A Benchmark for Retrieval Across Typed Ideation Operations in Scientific Literature"/>
+  <meta property="og:description"
+        content="RATIO is a large-scale benchmark for scientific inspiration retrieval, where relevance is defined by three ideation moves: ADDRESS, BROADEN, and SPECIFY."/>
+  <meta property="og:url" content="https://maayansharon10.github.io/RATIO-web/"/>
+  <meta property="og:image" content="static/images/social_media_banner.png"/> <!-- TODO: create banner (1200x630) -->
+  <meta property="og:image:width" content="1200"/>
+  <meta property="og:image:height" content="630"/>
+  <meta name="twitter:card" content="summary_large_image">
+  <meta name="twitter:title" content="RATIO: A Benchmark for Retrieval Across Typed Ideation Operations in Scientific Literature">
+  <meta name="twitter:description"
+        content="RATIO is a large-scale benchmark for scientific inspiration retrieval, where relevance is defined by three ideation moves: ADDRESS, BROADEN, and SPECIFY.">
+  <meta name="twitter:image" content="static/images/twitter-banner.png"> <!-- TODO -->
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+
+  <title>RATIO: A Benchmark for Retrieval Across Typed Ideation Operations in Scientific Literature</title>
+
+  <link href="https://fonts.googleapis.com/css?family=Google+Sans|Noto+Sans|Castoro" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bulma@0.9.4/css/bulma.min.css">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/jpswalsh/academicons@1/css/academicons.min.css">
+
+  <style>
+    body { font-family: 'Noto Sans', sans-serif; }
+    .publication-title, .publication-authors, .title { font-family: 'Google Sans', sans-serif; }
+    .publication-title { color: #363636; }
+    .publication-authors { color: #4a4a4a; }
+    .publication-authors a { color: hsl(204, 86%, 53%) !important; }
+    .publication-authors a:hover { text-decoration: underline; }
+    .author-block { display: inline-block; }
+    .publication-links .external-link.button { margin: 0.25rem; }
+    .link-block .button .icon { margin-right: 0.35rem; }
+    .hero.is-light-grey { background-color: #f5f5f5; }
+    .news-banner {
+      background: #fffbe6;
+      border-bottom: 1px solid #f0e6a6;
+      padding: 0.6rem 1rem;
+      text-align: center;
+      font-weight: 600;
+    }
+    .content h3 { margin-top: 2.5rem; }
+    .content h4 { margin-top: 1.8rem; }
+    figure figcaption, .fig-caption {
+      font-size: 0.9rem;
+      color: #6a6a6a;
+      margin-top: 0.5rem;
+      text-align: center;
+    }
+    .todo {
+      border: 2px dashed #e0a800;
+      background: #fff8e1;
+      color: #7a5c00;
+      border-radius: 8px;
+      padding: 1rem 1.25rem;
+      margin: 1.25rem auto;
+      font-size: 0.95rem;
+    }
+    .todo::before { content: "TODO — "; font-weight: 700; }
+    .fig-placeholder {
+      border: 2px dashed #b5b5b5;
+      background: #fafafa;
+      border-radius: 8px;
+      min-height: 220px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: #8a8a8a;
+      text-align: center;
+      padding: 1.5rem;
+      margin: 1.25rem 0;
+    }
+    .move-card {
+      border-radius: 10px;
+      padding: 1.25rem;
+      height: 100%;
+    }
+    .move-card .move-name {
+      font-family: 'Google Sans', sans-serif;
+      font-weight: 700;
+      font-size: 1.3rem;
+      letter-spacing: 0.03em;
+    }
+    .move-card .move-dir {
+      font-size: 0.85rem;
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+      opacity: 0.75;
+      margin-bottom: 0.5rem;
+    }
+    .move-address { background: #eef4fb; border: 1px solid #c8dcf2; }
+    .move-broaden { background: #f4effa; border: 1px solid #ddccf0; }
+    .move-specify { background: #fdf6ea; border: 1px solid #f2ddb5; }
+    .example-box {
+      background: #f5f7fa;
+      border-left: 4px solid #3273dc;
+      border-radius: 4px;
+      padding: 1rem 1.25rem;
+      margin: 1rem 0;
+    }
+    .example-box .marker { background: #ffe9b3; border-radius: 3px; padding: 0 0.2rem; }
+    table.results td, table.results th { vertical-align: middle; }
+    pre#bibtex-block { white-space: pre-wrap; }
+    .footer { background-color: #fafafa; }
+    .stat-number { font-size: 2rem; font-weight: 700; font-family: 'Google Sans', sans-serif; }
+    .stat-label { color: #6a6a6a; font-size: 0.9rem; }
+  </style>
+</head>
+<body>
+
+<div class="news-banner">
+  🎉 The dataset and fine-tuned models are now available on <a href="https://huggingface.co/collections/maayans/ratio">Hugging Face</a>! 🎉
+</div>
+
+<section class="hero">
+  <div class="hero-body">
+    <div class="container is-max-desktop">
+      <div class="columns is-centered">
+        <div class="column has-text-centered">
+          <h1 class="title is-1 publication-title">
+            <span style="font-variant: small-caps;">Ratio</span>: A Benchmark for Retrieval Across Typed Ideation Operations in Scientific Literature
+          </h1>
+          <div class="is-size-5 publication-authors">
+            <!-- TODO: add link to Maayan Sharon's homepage -->
+            <span class="author-block"><a href="#TODO">Maayan Sharon</a><sup>1</sup>,</span>
+            <span class="author-block"><a href="https://tomhoper.github.io/">Tom Hope</a><sup>1,2</sup></span>
+          </div>
+          <div class="is-size-5 publication-authors">
+            <span class="author-block"><sup>1</sup>The Hebrew University of Jerusalem,</span>
+            <span class="author-block"><sup>2</sup>Allen Institute for AI (Ai2)</span>
+          </div>
+
+          <div class="column has-text-centered">
+            <div class="publication-links">
+              <!-- TODO: add the arXiv link once available -->
+              <span class="link-block">
+                <a href="#TODO" class="external-link button is-normal is-rounded is-dark">
+                  <span class="icon"><i class="ai ai-arxiv"></i></span><span>Paper</span>
+                </a>
+              </span>
+              <span class="link-block">
+                <a href="https://github.com/maayansharon10/RATIO" class="external-link button is-normal is-rounded is-dark">
+                  <span class="icon"><i class="fab fa-github"></i></span><span>Code</span>
+                </a>
+              </span>
+              <span class="link-block">
+                <a href="https://huggingface.co/collections/maayans/ratio" class="external-link button is-normal is-rounded is-dark">
+                  <span class="icon">🤗</span><span>Data &amp; Models</span>
+                </a>
+              </span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="section hero is-light-grey">
+  <div class="container is-max-desktop">
+    <div class="columns is-centered has-text-centered">
+      <div class="column is-four-fifths">
+        <h2 class="title is-3">Abstract</h2>
+        <div class="content has-text-justified">
+          <p>
+            Retrieved scientific literature can serve as inspiration for both human and AI scientists.
+            Inspiration can take different forms: prior work may directly suggest how to address a problem,
+            or surface directions at different levels of abstraction&mdash;zooming out to a more general view
+            or zooming in to a concrete realization. We introduce <span style="font-variant: small-caps;">Ratio</span>
+            (Retrieval Across Typed Ideation Operations), a large-scale benchmark in which relevance is defined
+            by three operations which we name <em>ideation moves</em>: <b>ADDRESS</b> retrieves potential approaches
+            for stated problems, <b>BROADEN</b> retrieves more general formulations, and <b>SPECIFY</b> retrieves
+            concrete instantiations. <span style="font-variant: small-caps;">Ratio</span> is constructed from millions
+            of full-text scientific papers across CS literature via a general recipe that extends discourse-marker
+            distant supervision&mdash;previously used only for classification&mdash;to corpus-scale retrieval, combined
+            with extensive LLM and human vetting. Experiments show that operation-specific fine-tuning substantially
+            boosts retrievers but leaves much room for further improvements.
+            <span style="font-variant: small-caps;">Ratio</span> provides a scalable training and evaluation framework
+            for retrieval components that support literature-grounded ideation, opening up new research avenues on
+            scientific inspiration retrieval.
+          </p>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="section">
+  <div class="container is-max-desktop content has-text-justified">
+
+    <h3 class="title is-4">Ideation what?</h3>
+    <p>
+      Engaging with prior work is central to how researchers develop new ideas. Consider a researcher grappling
+      with <em>reward hacking in RL-trained LLMs</em>. Three different inspirations may be helpful: one proposing a
+      method (e.g., reward-model ensembles), one zooming out to a more general principle (e.g., Goodhart's law),
+      and one zooming in on a concrete instantiation of that principle in a new setting (e.g., recommender systems
+      gaming engagement metrics). Each one enables a distinct <b>move</b> through the ideation space&mdash;addressing
+      a problem, abstracting it, or grounding it.
+    </p>
+    <p>
+      Most scholarly retrieval benchmarks evaluate topical relevance or whether a document answers a search query.
+      These criteria do not distinguish between passages that play different <em>ideation roles</em>.
+      <span style="font-variant: small-caps;">Ratio</span> organizes retrieval around three moves that capture
+      complementary forms of inspiration:
+    </p>
+
+    <div class="columns">
+      <div class="column">
+        <div class="move-card move-address">
+          <div class="move-name">ADDRESS</div>
+          <div class="move-dir">Problem &rarr; Solution</div>
+          <p>The query articulates a problem; the candidate is an approach or insight that can help address it.</p>
+        </div>
+      </div>
+      <div class="column">
+        <div class="move-card move-broaden">
+          <div class="move-name">BROADEN</div>
+          <div class="move-dir">Specific &rarr; General</div>
+          <p>The candidate reformulates the query at a broader scope, such that the query can be viewed as a particular instance of it.</p>
+        </div>
+      </div>
+      <div class="column">
+        <div class="move-card move-specify">
+          <div class="move-name">SPECIFY</div>
+          <div class="move-dir">Abstract &rarr; Concrete</div>
+          <p>The candidate instantiates or operationalizes the query through a concrete case, mechanism, or example.</p>
+        </div>
+      </div>
+    </div>
+
+    <!-- TODO: export Figure 1 (teaser) as SVG/PNG and place at static/images/teaser.svg -->
+    <div class="fig-placeholder">
+      TODO: Figure 1 &mdash; teaser figure (discourse-marker supervision + human&ndash;LLM validation supporting the three ideation moves)
+      <!-- <img src="static/images/teaser.svg" alt="RATIO overview"> -->
+    </div>
+    <p class="fig-caption">
+      We construct <span style="font-variant: small-caps;">Ratio</span> from full-text scientific papers using
+      discourse-marker supervision and human&ndash;LLM validation to support retrieval across three ideation moves:
+      ADDRESS, BROADEN, SPECIFY.
+    </p>
+
+    <h3 class="title is-4">The <span style="font-variant: small-caps;">Ratio</span> Benchmark</h3>
+    <p>
+      Authors routinely signal how a sentence relates to its predecessor with discourse markers. We exploit this
+      to harvest query&ndash;gold pairs directly from full-text papers:
+    </p>
+    <div class="example-box">
+      &ldquo;Our model is prone to overfitting. <span class="marker">To address this issue,</span> we apply dropout.&rdquo;<br>
+      <small>
+        query = <em>&ldquo;Our model is prone to overfitting.&rdquo;</em> &nbsp;&bull;&nbsp;
+        marker = <em>&ldquo;To address this issue,&rdquo;</em> (stripped, kept only as metadata) &nbsp;&bull;&nbsp;
+        gold = <em>&ldquo;we apply dropout&rdquo;</em>
+      </small>
+    </div>
+    <p>
+      These labels are not weak proxies: a marker such as <em>&ldquo;To address this issue,&rdquo;</em> is an explicit,
+      author-asserted judgment by a domain expert that the following statement constitutes a solution direction for
+      the stated problem. Unlike prior discourse-marker distant supervision, which is confined to sentence-pair
+      classification, we extend markers to define <b>relation-conditioned ideation retrieval</b> over a corpus of
+      millions of candidates: the marker is stripped from the input and determines which relation a candidate must
+      instantiate with respect to a query, evaluated by ranking against a shared candidate corpus.
+    </p>
+    <p>
+      Move-specific marker lexicons are built by an iterative multi-stage process combining manual corpus analysis,
+      rule-based (Hearst-style) pattern expansion, and generation by multiple LLMs, followed by expert review and
+      LLM validation. Of 4,256 candidate markers, 807 fired in the corpus; two NLP experts independently vetted all
+      807 and found every one valid. Markers rejected during curation become <em>distractor</em> markers whose
+      sentences are added to the candidate pool as hard negatives, removing pool-membership shortcuts.
+    </p>
+
+    <!-- TODO: export Figure 2 (construction pipeline) and place at static/images/pipeline.svg -->
+    <div class="fig-placeholder">
+      TODO: Figure 2 &mdash; construction pipeline (1&nbsp;marker lexicon &rarr; 2&nbsp;mine transitions &rarr;
+      3&nbsp;remove marker + filter &rarr; 4&nbsp;temporal split &rarr; 5&nbsp;shared candidate corpus &rarr;
+      6&nbsp;validation: silver + top-10)
+      <!-- <img src="static/images/pipeline.svg" alt="Construction of RATIO"> -->
+    </div>
+    <p class="fig-caption">
+      Construction of <span style="font-variant: small-caps;">Ratio</span>. Validated discourse markers identify
+      ADDRESS, BROADEN, and SPECIFY transitions in full-text papers. The marker is removed from the candidate text,
+      publication dates determine the temporal partitions, and all operations retrieve from a shared candidate corpus.
+    </p>
+
+    <h4 class="title is-5">Scale</h4>
+    <div class="columns has-text-centered">
+      <div class="column">
+        <div class="stat-number">3.59M</div>
+        <div class="stat-label">query&ndash;gold pairs (all splits)</div>
+      </div>
+      <div class="column">
+        <div class="stat-number">14.55M</div>
+        <div class="stat-label">candidate sentences (all splits)</div>
+      </div>
+      <div class="column">
+        <div class="stat-number">1.1M</div>
+        <div class="stat-label">source papers</div>
+      </div>
+      <div class="column">
+        <div class="stat-number">807</div>
+        <div class="stat-label">human-vetted markers</div>
+      </div>
+    </div>
+    <p>
+      <span style="font-variant: small-caps;">Ratio</span> comprises 2,779,177 SPECIFY, 793,347 ADDRESS, and
+      15,592 BROADEN pairs. Splits are <b>temporal</b> to enforce a strict approach against contamination:
+      training uses papers from 2015 through September 2025, validation the remainder of 2025, and the test set
+      papers from 2026 only&mdash;postdating the public release of every evaluated model, so no backbone could have
+      encountered them during pre-training. The candidate corpus of each split is shared by all three relations,
+      so selecting the retrieval operation does not reveal which candidates are relevant.
+    </p>
+
+    <div class="table-container">
+      <table class="table is-bordered is-striped is-narrow is-fullwidth results">
+        <thead>
+          <tr>
+            <th rowspan="2">Relation</th>
+            <th colspan="2" class="has-text-centered">Train</th>
+            <th colspan="2" class="has-text-centered">Validation</th>
+            <th colspan="2" class="has-text-centered">Test</th>
+          </tr>
+          <tr>
+            <th class="has-text-centered">Queries</th><th class="has-text-centered">Candidates</th>
+            <th class="has-text-centered">Queries</th><th class="has-text-centered">Candidates</th>
+            <th class="has-text-centered">Queries</th><th class="has-text-centered">Candidates</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td>SPECIFY</td>
+            <td class="has-text-right">2,605,515</td><td rowspan="3" class="has-text-centered" style="vertical-align: middle;">13,787,834</td>
+            <td class="has-text-right">79,583</td><td rowspan="3" class="has-text-centered" style="vertical-align: middle;">361,172</td>
+            <td class="has-text-right">94,079</td><td rowspan="3" class="has-text-centered" style="vertical-align: middle;">404,371</td>
+          </tr>
+          <tr>
+            <td>ADDRESS</td>
+            <td class="has-text-right">719,136</td>
+            <td class="has-text-right">31,963</td>
+            <td class="has-text-right">42,248</td>
+          </tr>
+          <tr>
+            <td>BROADEN</td>
+            <td class="has-text-right">13,687</td>
+            <td class="has-text-right">495</td>
+            <td class="has-text-right">1,410</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+    <p class="fig-caption">
+      Temporal split with a shared candidate pool across relations. Each query is paired with a single gold candidate;
+      the candidate corpus of each split is shared by all relations.
+    </p>
+
+    <h4 class="title is-5">Human-calibrated validation</h4>
+    <p>
+      We complement the mined benchmark with a human-calibrated, LLM-validated <b>silver test set</b> of 13,729 queries.
+      For each relation we write 4&ndash;6 candidate validation prompts and keep the two that best match expert
+      judgments (F1 of .85&ndash;.88 for ADDRESS and SPECIFY, .76 for BROADEN, against 300 expert annotations);
+      inter-annotator F1 among five experts is .87 / .90 / .82. A pair is kept only if both prompts accept it.
+      We further validate <b>top-10 retrieved candidates</b> to account for false negatives.
+    </p>
+
+    <h3 class="title is-4">Move-specific fine-tuning helps a lot &mdash; but the task is far from solved</h3>
+    <p>
+      We evaluate BM25 and three dense retrievers (all-mpnet-base-v2, ModernBERT-embed-large, Stella-en-1.5B-v5),
+      each as a pre-trained baseline and after relation-specific contrastive fine-tuning. Baseline pre-trained
+      models provide limited gains over BM25, whereas move-specific fine-tuning yields substantial improvements,
+      increasing performance by <b>1.5&times;&ndash;2.7&times;</b>. ModernBERT-embed-large is the strongest model
+      on every operation:
+    </p>
+
+    <div class="table-container">
+      <table class="table is-bordered is-striped is-narrow is-fullwidth results">
+        <thead>
+          <tr>
+            <th>MRR@10 (silver test set)</th>
+            <th class="has-text-centered">SPECIFY</th>
+            <th class="has-text-centered">ADDRESS</th>
+            <th class="has-text-centered">BROADEN</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td>BM25 (unigram)</td>
+            <td class="has-text-centered">17.6</td>
+            <td class="has-text-centered">8.7</td>
+            <td class="has-text-centered">10.9</td>
+          </tr>
+          <tr>
+            <td>ModernBERT-embed-large &mdash; baseline</td>
+            <td class="has-text-centered">26.0</td>
+            <td class="has-text-centered">11.1</td>
+            <td class="has-text-centered">17.3</td>
+          </tr>
+          <tr>
+            <td><b>ModernBERT-embed-large &mdash; fine-tuned</b></td>
+            <td class="has-text-centered"><b>44.0</b></td>
+            <td class="has-text-centered"><b>29.5</b></td>
+            <td class="has-text-centered"><b>27.3</b></td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+    <p class="fig-caption">
+      Headline results on the silver test set (recommended-prefix setup; full tables for all models, setups, and
+      metrics in the paper). Even the best model fails for most ADDRESS and BROADEN queries, and MRR@100 exceeds
+      MRR@10 by at most 0.8 points&mdash;failures are not near-hits.
+    </p>
+
+    <h3 class="title is-4">The mined positive is not the only valid inspiration</h3>
+    <p>
+      Single-positive metrics are a scalable lower bound: they test whether the retriever ranks one known-valid
+      inspiration highly, not whether the mined positive is the only valid one. We therefore judge each of the
+      top-10 retrieved candidates independently with human-calibrated LLM prompts (400 queries per relation,
+      24K judged pairs). After fine-tuning, at least one accepted candidate appears in the top 10 for
+      <b>89.0%</b> of SPECIFY and <b>80.0%</b> of ADDRESS queries (hard agreement: both prompts accept), with accepted candidates per ADDRESS list rising
+      from 0.60 to 2.36.
+    </p>
+    <p>
+      On tuned ADDRESS, for 40.8% of queries the gold is not ranked in the top 10 yet the judge accepts an
+      alternative candidate; counting any accepted candidate raises ADDRESS MRR@10 from 29.5 to 48.7.
+      These discovered positives overlap lexically with the query <em>less</em> than the mined positives do,
+      and <b>88&ndash;94%</b> of all accepted candidates come from papers other than the query's&mdash;tuned
+      retrievers surface valid solution directions from the broader literature, i.e., inspiration in the intended
+      sense, rather than exploiting adjacency or other shallow shortcuts.
+    </p>
+
+    <!-- TODO: optional — add the lexical-overlap figure (Figure 4) and/or the judge-decision violin figure (Figure 5) -->
+    <div class="fig-placeholder">
+      TODO (optional): analysis figures &mdash; e.g., query&ndash;candidate lexical overlap by retrieval depth
+      (tuned vs. baseline), or the top-10 candidate evaluation overlap violins
+    </div>
+
+  </div>
+</section>
+
+<section class="section" id="BibTeX">
+  <div class="container is-max-desktop content">
+    <h2 class="title">BibTeX</h2>
+    <!-- TODO: replace with the final BibTeX entry once the arXiv ID exists -->
+    <pre id="bibtex-block"><code>@misc{sharon2026ratio,
+  title={RATIO: A Benchmark for Retrieval Across Typed Ideation Operations in Scientific Literature},
+  author={Maayan Sharon and Tom Hope},
+  year={2026},
+  eprint={TODO},
+  archivePrefix={arXiv},
+  primaryClass={cs.CL},
+  url={TODO},
+}</code></pre>
+  </div>
+</section>
+
+<footer class="footer">
+  <div class="container">
+    <div class="columns is-centered">
+      <div class="column is-8">
+        <div class="content has-text-centered">
+          <p>
+            This page was built using the
+            <a href="https://github.com/eliahuhorwitz/Academic-project-page-template">Academic Project Page Template</a>,
+            adopted from the <a href="https://nerfies.github.io">Nerfies</a> project page.
+            You are free to borrow the source code of this website, we just ask that you link back to this page in the footer.
+            <br>
+            This website is licensed under a
+            <a rel="license" href="http://creativecommons.org/licenses/by-sa/4.0/">Creative Commons Attribution-ShareAlike 4.0 International License</a>.
+          </p>
+          <!-- TODO: add web analytics snippet if desired (CHIMERA uses StatCounter) -->
+        </div>
+      </div>
+    </div>
+  </div>
+</footer>
+
+</body>
+</html>
