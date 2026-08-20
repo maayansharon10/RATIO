@@ -28,6 +28,31 @@
       }
     },
     "modernbert-embed-large": {
+      "querySentence_prompt": {
+        "base_model_path": "lightonai/modernbert-embed-large",
+        "base_model": "modernbert-embed-large",
+        "loss": "MultipleNegativesRankingLoss",
+        "similarity_fn_name": "cosine",
+        "dataset_version": "cs2_qt5",
+        "datasets_to_train_on": "all",
+        "format": "transductive",
+        "query_setup": "querySentence_prompt",
+        "columns_setup_dict": {
+          "querySentence_prompt": "anchor",
+          "goldSentence_prompt": "positive"
+        },
+        "setup_column_dict": {
+          "anchor": "querySentence_prompt",
+          "positive": "goldSentence_prompt"
+        },
+        "best_runs_path": "models/modernbert-embed-large/cs2_qt5/transductive/querySentence_prompt/best_runs.json",
+        "all_evals_path": "models/modernbert-embed-large/cs2_qt5/transductive/querySentence_prompt/all_evals.csv",
+        "evaluator": {
+          "evaluator_type": "InformationRetrievalEvaluator",
+          "evaluator_val_name": "IR-val-eval",
+          "evaluator_test_name": "IR-test-eval"
+        }
+      },
       "querySentence_prompt_search_query": {
         "base_model_path": "lightonai/modernbert-embed-large",
         "base_model": "modernbert-embed-large",
@@ -55,6 +80,32 @@
       }
     },
     "stella_en_1.5B_v5": {
+      "querySentence_prompt": {
+        "base_model_path": "NovaSearch/stella_en_1.5B_v5",
+        "base_model": "stella_en_1.5B_v5",
+        "loss": "MultipleNegativesRankingLoss",
+        "similarity_fn_name": "cosine",
+        "dataset_version": "cs2_qt5",
+        "datasets_to_train_on": "all",
+        "format": "transductive",
+        "query_setup": "querySentence_prompt",
+        "query_prompt": "Instruct: Given a web search query, retrieve relevant passages that answer the query.\\n",
+        "columns_setup_dict": {
+          "querySentence_prompt": "anchor",
+          "goldSentence_prompt": "positive"
+        },
+        "setup_column_dict": {
+          "anchor": "querySentence_prompt",
+          "positive": "goldSentence_prompt"
+        },
+        "best_runs_path": "models/stella_en_1.5B_v5/cs2_qt5/transductive/querySentence_prompt/best_runs.json",
+        "all_evals_path": "models/stella_en_1.5B_v5/cs2_qt5/transductive/querySentence_prompt/all_evals.csv",
+        "evaluator": {
+          "evaluator_type": "InformationRetrievalEvaluator",
+          "evaluator_val_name": "IR-val-eval",
+          "evaluator_test_name": "IR-test-eval"
+        }
+      },
       "querySentence_group_s2p_query": {
         "base_model_path": "NovaSearch/stella_en_1.5B_v5",
         "base_model": "stella_en_1.5B_v5",
