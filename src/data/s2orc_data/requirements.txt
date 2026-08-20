@@ -1,0 +1,8 @@
+requests
+numpy
+pandas
+pyarrow
+fastparquet
+scikit-learn
+spacy
+scispacy

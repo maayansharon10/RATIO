@@ -1,0 +1,101 @@
+{
+  "version": "cs2_qt5",
+  "preprocessing_data": {
+    "s2orc_raw_data_path": "data_s2orc/output",
+    "raw_data_description": "s2orc_raw_data_path is s2orc filtered by CS field",
+    "filtered_output_dir": "data/filtered",
+    "sub_datasets_dir": "data/subDatasets",
+    "s2orc_raw_data_single_text_col": "single_text",
+    "s2orc_raw_data_multi_text_col": "multi_text",
+    "should_extra_clean": "True",
+    "extract_columns": {
+      "querySentence": "querySentence",
+      "goldSentence": "goldSentence"
+    },
+    "QueryTerms": {
+      "queryTerm_col": "queryTerm",
+      "QueryTerms_version": "5",
+      "QueryTerms_list_Path": "data/raw/queryTerms/qt5/all_query_terms5.csv",
+      "manual_QueryTerms_list_Path": "data/raw/queryTerms/qt5/all_query_terms5.csv",
+      "queryTerms_groups": {
+        "all": [
+          "implicit_similarity",
+          "explicit_similarity",
+          "explicit_contrast",
+          "more_specific",
+          "more_generally",
+          "solving_problems_improvements_mitigation",
+          "common_irrelevant"
+        ],
+        "allButContrast": [
+          "explicit_similarity",
+          "more_specific",
+          "solving_problems_improvements_mitigation",
+          "more_generally"
+        ],
+        "similarity": [
+          "implicit_similarity",
+          "explicit_similarity"
+        ],
+        "specificity_spectrum": [
+          "more_specific",
+          "more_generally"
+        ],
+        "explicit_contrast": [
+          "explicit_contrast"
+        ],
+        "implicit_similarity": [
+          "implicit_similarity"
+        ],
+        "explicit_similarity": [
+          "explicit_similarity"
+        ],
+        "more_specific": [
+          "more_specific"
+        ],
+        "Solving_problems_improvements_mitigation": [
+          "solving_problems_improvements_mitigation"
+        ],
+        "more_generally": [
+          "more_generally"
+        ],
+        "common_irrelevant": [
+          "common_irrelevant"
+        ]
+      }
+    }
+  },
+  "createDataset": {
+    "dataset_original_split_dir": "data/original_split",
+    "dataset_output_dir": "data/datasets_for_training",
+    "sub_datasets_names": {
+      "positive_original_pairs": "positiveOriginalPairs",
+      "neutral": "neutral"
+    },
+    "mutual_columns": [
+      "corpusid",
+      "year",
+      "publicationdate",
+      "queryTerm_group",
+      "raw_queryTerm",
+      "queryTerm",
+      "querySentence_introductory_clauses",
+      "querySentence",
+      "goldSentence",
+      "goldSentence_prompt",
+      "querySentence_prompt",
+      "querySentence_dot_queryTerm",
+      "querySentence_group_prompt",
+      "query_term_gold"
+    ],
+    "dataset_sub_combinations": {
+      "originalPairsDS": [
+        "positiveOriginalPairs"
+      ]
+    },
+    "dataset_description": "CS sentences. original pairs only (positive). Split when paper_id is grouped and try to normalize queryTerm. setup2 - first split, then filter train_all, val_all by groups to create sub datasets. mutual_columns includes 'year' and 'publicationdate' so temporal splits (e.g. mid-2025 cutoff) work without further config changes."
+  },
+  "analysis": {
+    "analysis_data_output_dir": "analysis/data"
+  }
+}

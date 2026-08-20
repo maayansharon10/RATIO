@@ -1,0 +1,9 @@
+# Training stage only (data pipeline: requirements.txt)
+# Pins matter: DDP workarounds in 3_train_models_hpo_ddp.py are
+# specific to these versions (see the script docstring).
+torch
+sentence-transformers==5.4.0
+transformers==4.48.2
+accelerate==1.4.0
+datasets
+wandb
