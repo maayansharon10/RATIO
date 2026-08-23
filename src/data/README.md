@@ -42,7 +42,7 @@ Lives in [`s2orc_data/`](s2orc_data/README.md) — see its README for the full w
 
 ## Stage 1 — Filter sentences by queryTerms
 
-Configuration lives in `config/data/configData_cs2_qt5.json` (column names, output dirs, queryTerms CSV path), loaded via `config/ProjectDataConfig.py` with helpers in `src/utils.py` — run from the repo root with `PYTHONPATH` set. The queryTerms list lives at `data/raw/queryTerms/qt5/all_query_terms5.csv`, with columns `word`, `group`, `special_word`; the `blacklist` group marks excluded terms.
+Configuration lives in `config/data/configData_cs2_qt5.json` (column names, output dirs, queryTerms CSV path), loaded via `config/ProjectDataConfig.py` with helpers in `src/utils.py` — run from the repo root with `PYTHONPATH` set. The queryTerms list lives at `data/raw/queryTerms/qt5/all_query_terms5.csv`, with columns `word`, `group`, `special_word`; the `denylist` group marks excluded terms.
 
 ```bash
 export PYTHONPATH=$PWD
