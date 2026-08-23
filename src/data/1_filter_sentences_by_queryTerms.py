@@ -155,13 +155,13 @@ def load_regex_list(queryTerms: list) -> list:
 def load_queryTerms_lists(queryTerms_path):
     """
     Load queryTerms from a single unified CSV. The CSV has a 'group' column that
-    assigns each term to one of 7 groups: the 6 relation-type groups plus 'blacklist'.
+    assigns each term to one of 7 groups: the 6 relation-type groups plus 'denylist'.
 
     Returns:
-        queryTerms_list:     non-blacklist terms, lowercased — used for prefix matching
+        queryTerms_list:     non-denylist terms, lowercased — used for prefix matching
         queryTerms_group:    group label per term in queryTerms_list (same order)
-        special_queryTerms:  non-blacklist terms flagged special_word=True
-        blacklist:           blacklist-group terms, lowercased — NOT used for prefix
+        special_queryTerms:  non-denylist terms flagged special_word=True
+        denylist:           denylist-group terms, lowercased — NOT used for prefix
                              matching (sentences starting with these stay unmatched),
                              but included in the known-set subtraction during
                              potential-queryTerm extraction so they don't surface as
@@ -170,18 +170,18 @@ def load_queryTerms_lists(queryTerms_path):
     df = pd.read_csv(queryTerms_path)
 
     # Split by group. Comparison is case-insensitive to be lenient with CSV authoring.
-    is_blacklist = df['group'].astype(str).str.lower() == 'blacklist'
-    df_active = df[~is_blacklist]
-    df_blacklist = df[is_blacklist]
+    is_denylist = df['group'].astype(str).str.lower() == 'denylist'
+    df_active = df[~is_denylist]
+    df_denylist = df[is_denylist]
 
     queryTerms_list = col_as_list(df_active, "word", to_lower=True)
     queryTerms_group = col_as_list(df_active, "group")
     special_queryTerms_list = col_as_list(
         df_active[df_active['special_word'] == True], "word", to_lower=True
     )
-    blacklist = col_as_list(df_blacklist, "word", to_lower=True)
+    denylist = col_as_list(df_denylist, "word", to_lower=True)
 
-    return queryTerms_list, queryTerms_group, special_queryTerms_list, blacklist
+    return queryTerms_list, queryTerms_group, special_queryTerms_list, denylist
 
 
 def remove_leading_numbers_and_dot(text):
@@ -304,30 +304,30 @@ def get_queryTerms_group(row: pd.Series, queryTerm_group_dict: dict) -> str:
     return queryTerm_group_dict[row['raw_queryTerm']]
 
 
-# Groups in the queryTerms CSV that mark a term as irrelevant/blacklisted.
-# Compared case-insensitively, so both 'common_irrelevant' and 'BLACKLIST' spellings match.
-BAD_GROUPS = {"common_irrelevant", "blacklist"}
+# Groups in the queryTerms CSV that mark a term as irrelevant/denylisted.
+# Compared case-insensitively, so both 'common_irrelevant' and 'DENYLIST' spellings match.
+BAD_GROUPS = {"common_irrelevant", "denylist"}
 
 
-def build_blacklist_term2group(queryTerms_path) -> dict:
+def build_denylist_term2group(queryTerms_path) -> dict:
     """
     Map lowercased term -> its original group label, for terms whose group in the
-    queryTerms CSV is common_irrelevant/BLACKLIST. Used by
-    correct_blacklisted_queryTerm_groups below.
+    queryTerms CSV is common_irrelevant/DENYLIST. Used by
+    correct_denylisted_queryTerm_groups below.
     """
     qt = pd.read_csv(queryTerms_path)
     qt_bad = qt[qt["group"].astype(str).str.lower().isin(BAD_GROUPS)]
     return dict(zip(qt_bad["word"].astype(str).str.lower(), qt_bad["group"]))
 
 
-def correct_blacklisted_queryTerm_groups(df: pd.DataFrame, term2group: dict) -> pd.DataFrame:
+def correct_denylisted_queryTerm_groups(df: pd.DataFrame, term2group: dict) -> pd.DataFrame:
     """
-    Double-verify blacklist/common_irrelevant marking before saving.
+    Double-verify denylist/common_irrelevant marking before saving.
 
     WHY: 'queryTerm' is merged from matched_pattern (special-queryTerm regex) and
     raw_queryTerm, but 'queryTerm_group' is looked up by raw_queryTerm only. A
     special-term match can therefore end with a final queryTerm that the CSV lists
-    as common_irrelevant/BLACKLIST while queryTerm_group still carries the group of
+    as common_irrelevant/DENYLIST while queryTerm_group still carries the group of
     the raw prefix match. Any row whose final queryTerm is in the bad list gets its
     group forced to the CSV's group, so downstream filtering on queryTerm_group
     reliably drops these rows.
@@ -339,8 +339,8 @@ def correct_blacklisted_queryTerm_groups(df: pd.DataFrame, term2group: dict) -> 
     mask = qt_lower.isin(term2group) & ~already_bad
     if mask.any():
         df.loc[mask, "queryTerm_group"] = qt_lower[mask].map(term2group)
-        print(f"[blacklist-verify] corrected queryTerm_group on {mask.sum():,} rows "
-              f"(queryTerm listed as common_irrelevant/BLACKLIST in queryTerms CSV)",
+        print(f"[denylist-verify] corrected queryTerm_group on {mask.sum():,} rows "
+              f"(queryTerm listed as common_irrelevant/DENYLIST in queryTerms CSV)",
               flush=True)
     return df
 
@@ -394,12 +394,12 @@ def filter_sentences_by_queryTerms(df: pd.DataFrame,
     queryTerm_group_dict = dict(zip(queryTerms_list, queryTerms_group))
     result_df['queryTerm_group'] = result_df.apply(get_queryTerms_group, axis=1, args=((queryTerm_group_dict),))
 
-    # Double-verify blacklist/common_irrelevant marking before the result is saved:
-    # special-queryTerm merging can produce a final queryTerm that the CSV blacklists
+    # Double-verify denylist/common_irrelevant marking before the result is saved:
+    # special-queryTerm merging can produce a final queryTerm that the CSV denylists
     # while queryTerm_group was assigned from the raw prefix match. Force those rows
-    # to their CSV group. (See correct_blacklisted_queryTerm_groups for details.)
-    bad_term2group = build_blacklist_term2group(config.get_queryTerms_list_path())
-    result_df = correct_blacklisted_queryTerm_groups(result_df, bad_term2group)
+    # to their CSV group. (See correct_denylisted_queryTerm_groups for details.)
+    bad_term2group = build_denylist_term2group(config.get_queryTerms_list_path())
+    result_df = correct_denylisted_queryTerm_groups(result_df, bad_term2group)
 
     return result_df
 
@@ -631,9 +631,9 @@ def process_single_input(df, config, num_workers, unmatched_spill_path=None):
     df = normalize_single_multi_text_cols(df, config)
 
     # ------ filter sentences by queryTerms and split to querySentence and goldSentence
-    # Note: blacklist terms are NOT in the active queryTerms_list used for prefix matching
-    # (see load_queryTerms_lists — blacklist is a separate group that's excluded from
-    # active terms). Sentences starting with a blacklist term therefore flow into the
+    # Note: denylist terms are NOT in the active queryTerms_list used for prefix matching
+    # (see load_queryTerms_lists — denylist is a separate group that's excluded from
+    # active terms). Sentences starting with a denylist term therefore flow into the
     # unmatched bucket and get dropped during extraction's known-set subtraction.
     print("filtering sentences by queryTerms", flush=True)
     df_filtered = filter_sentences_by_queryTerms(
@@ -676,7 +676,7 @@ def extract_potential_queryTerms_from_unmatched(
          becomes 'more generally, X' — this happens ONLY here, not in the main filter).
       3. Regex-extract the first 1-4 words followed by a comma at sentence start.
       4. Heuristic filters: drop numeric-only, non-alphanumeric start, 1-2 letter terms.
-      5. Subtract known set (queryTerms ∪ blacklist) so the output contains only novel
+      5. Subtract known set (queryTerms ∪ denylist) so the output contains only novel
          candidates for the LLM classifier downstream.
       6. Aggregate to (potential_queryTerm, count) via value_counts — only if non-empty.
       7. Capture up to samples_per_term example sentences per unique term — only if
@@ -749,10 +749,10 @@ def extract_potential_queryTerms_from_unmatched(
     if after_heuristics == 0:
         return _finalize_empty("all rows dropped by heuristic filters")
 
-    # Step 5: subtract known set (active queryTerms ∪ blacklist).
-    # Both come from the same unified CSV now — blacklist is just a group within it.
-    queryTerms_list, _, _, blacklist = load_queryTerms_lists(config.get_queryTerms_list_path())
-    known_set = set(t.lower() for t in queryTerms_list) | set(t.lower() for t in blacklist)
+    # Step 5: subtract known set (active queryTerms ∪ denylist).
+    # Both come from the same unified CSV now — denylist is just a group within it.
+    queryTerms_list, _, _, denylist = load_queryTerms_lists(config.get_queryTerms_list_path())
+    known_set = set(t.lower() for t in queryTerms_list) | set(t.lower() for t in denylist)
     df = df[~df['potential_queryTerm'].isin(known_set)]
     after_subtraction = len(df)
     print(f"[extract] After known-set subtraction: {after_subtraction:,} rows "
