@@ -22,8 +22,8 @@ Each relation also provides a **silver test set** — a higher-precision subset 
 
 Full details, dataset statistics, and experimental results are in the [paper](https://arxiv.org/abs/2608.27394).
 
-<!-- TODO: add teaser figure (Figure 1 from the paper) -->
-<!-- ![RATIO overview](figures/ratio_overview.png) -->
+
+https://github.com/user-attachments/assets/6c6f01cc-487b-4e9b-a6be-048ca731bafe
 
 ## 🤗 HuggingFace Repositories
 
