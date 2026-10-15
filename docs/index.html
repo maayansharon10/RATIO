@@ -10,14 +10,14 @@
   <meta property="og:description"
         content="RATIO is a large-scale benchmark for scientific inspiration retrieval, where relevance is defined by three ideation moves: ADDRESS, BROADEN, and SPECIFY."/>
   <meta property="og:url" content="https://maayansharon10.github.io/RATIO/"/>
-  <meta property="og:image" content="https://maayansharon10.github.io/RATIO/static/images/figure1.png"/> <!-- TODO: replace with a dedicated 1200x630 banner -->
+  <meta property="og:image" content="https://maayansharon10.github.io/RATIO/static/images/teaser.png"/>
   <meta property="og:image:width" content="1200"/>
   <meta property="og:image:height" content="630"/>
   <meta name="twitter:card" content="summary_large_image">
   <meta name="twitter:title" content="RATIO: A Benchmark for Retrieval Across Typed Ideation Operations in Scientific Literature">
   <meta name="twitter:description"
         content="RATIO is a large-scale benchmark for scientific inspiration retrieval, where relevance is defined by three ideation moves: ADDRESS, BROADEN, and SPECIFY.">
-  <meta name="twitter:image" content="https://maayansharon10.github.io/RATIO/static/images/figure1.png"> <!-- TODO: dedicated banner -->
+  <meta name="twitter:image" content="https://maayansharon10.github.io/RATIO/static/images/teaser.png">
   <meta name="viewport" content="width=device-width, initial-scale=1">
 
   <title>RATIO: A Benchmark for Retrieval Across Typed Ideation Operations in Scientific Literature</title>
@@ -160,7 +160,6 @@
             <span style="font-variant: small-caps;">Ratio</span>: A Benchmark for Retrieval Across Typed Ideation Operations in Scientific Literature
           </h1>
           <div class="is-size-5 publication-authors">
-            <!-- TODO: add link to Maayan Sharon's homepage -->
             <span class="author-block"><a href="https://github.com/maayansharon10" target="_blank" rel="noopener">Maayan Sharon</a><sup>1</sup>,</span>
             <span class="author-block"><a href="https://tomhoper.github.io/" target="_blank" rel="noopener">Tom Hope</a><sup>1,2</sup></span>
           </div>
@@ -171,7 +170,6 @@
 
           <div class="column has-text-centered">
             <div class="publication-links">
-              <!-- TODO: add the arXiv link once available -->
               <span class="link-block">
                 <a href="https://arxiv.org/abs/2608.27394" target="_blank" rel="noopener" class="external-link button is-normal is-rounded is-dark">
                   <span class="icon"><i class="ai ai-arxiv"></i></span><span>Paper</span>
@@ -223,10 +221,11 @@
             of full-text scientific papers across CS literature via a general recipe that extends discourse-marker
             distant supervision&mdash;previously used only for classification&mdash;to corpus-scale retrieval, combined
             with extensive LLM and human vetting. Experiments show that operation-specific fine-tuning substantially
-            boosts retrievers but leaves much room for further improvements.
+            boosts retrievers and LLM reranking helps further, but much room for improvement remains. Researchers
+            blind to condition found the fine-tuned retriever's candidates more useful as inspirations.
             <span style="font-variant: small-caps;">Ratio</span> provides a scalable training and evaluation framework
-            for retrieval components that support literature-grounded ideation, opening up new research avenues on
-            scientific inspiration retrieval.
+            for retrieval components that support literature-grounded ideation, opening up new research avenues in
+            scientific inspiration retrieval. We release full data, code, models, and annotations.
           </p>
         </div>
       </div>
@@ -321,7 +320,7 @@
       </div>
     </div>
 
-    <img src="static/images/figure1.png" alt="RATIO overview" style="width: 100%; max-width: 440px; display: block; margin: 1.25rem auto;">
+    <img src="static/images/teaser.png" alt="RATIO overview" style="width: 100%; max-width: 560px; display: block; margin: 1.25rem auto;">
     <p class="fig-caption">
       We construct <span style="font-variant: small-caps;">Ratio</span> from full-text scientific papers using
       discourse-marker supervision and human&ndash;LLM validation to support retrieval across three ideation moves:
@@ -350,18 +349,23 @@
       instantiate with respect to a query, evaluated by ranking against a shared candidate corpus.
     </p>
     <p>
-      Move-specific marker lexicons are built by an iterative multi-stage process combining manual corpus analysis,
-      rule-based (Hearst-style) pattern expansion, and generation by multiple LLMs, followed by expert review and
-      LLM validation. Of 4,252 candidate markers, 809 fired in the corpus; two NLP experts independently vetted all
-      809 and found every one valid. Markers rejected during curation become <em>distractor</em> markers whose
-      sentences are added to the candidate pool as hard negatives, removing pool-membership shortcuts.
+      A valid marker must signal the move and refer back to the preceding sentence: <em>More generally,</em> is a
+      BROADEN marker, but <em>In general,</em> is not, because it points to no specific sentence. Move-specific
+      lexicons come from four sources: manual corpus analysis, short extensions of frequent prefixes
+      (<em>To address this potential bias,</em>), generation by three LLMs from different model families, and
+      Hearst-style pattern expansion. The three lexicons are disjoint and together hold 4,252 markers. Matched
+      against all 366.6M consecutive-sentence pairs in the corpus, 809 of them fire; two NLP experts independently
+      vetted all 809 and found every one valid. Markers rejected during curation become <em>distractor</em> markers
+      whose sentences are added to the candidate pool as hard negatives, removing pool-membership shortcuts.
     </p>
 
     <img src="static/images/pipelineFINAL.png" alt="Construction of RATIO" style="width: 100%; max-width: 800px; display: block; margin: 1.25rem auto;">
     <p class="fig-caption">
       Construction of <span style="font-variant: small-caps;">Ratio</span>. Validated discourse markers identify
-      ADDRESS, BROADEN, and SPECIFY transitions in full-text papers. The marker is removed from the candidate text,
-      publication dates determine the temporal partitions, and all operations retrieve from a shared candidate corpus.
+      pairs of consecutive sentences that realize ADDRESS, BROADEN, or SPECIFY. The first sentence becomes the query,
+      and the second, without its marker, becomes the gold sentence. Publication dates define the splits, and all
+      operations retrieve from a shared candidate corpus. An LLM judge calibrated against human labels filters the test
+      pairs into the silver test set, and researchers evaluate the top-10 retrieved candidates.
     </p>
 
     <h4 class="title is-5">Scale</h4>
@@ -386,10 +390,10 @@
     <p>
       <span style="font-variant: small-caps;">Ratio</span> comprises 3,017,476 query&ndash;gold pairs&mdash;2,779,177 SPECIFY, 222,707 ADDRESS, and
       15,592 BROADEN. Splits are <b>temporal</b> to enforce a strict approach against contamination:
-      training uses papers from 2015 through September 2025, validation the remainder of 2025, and the test set
-      papers from 2026 only&mdash;postdating the public release of every evaluated model, so no backbone could have
-      encountered them during pre-training. The candidate corpus of each split is shared by all three relations,
-      so selecting the retrieval operation does not reveal which candidates are relevant.
+      training uses papers from 2015 through September 2025, validation October&ndash;December 2025, and test
+      January&ndash;May 2026, after the public release of every evaluated model. The candidate corpus of each split
+      is shared by all three relations, so selecting the retrieval operation does not reveal which candidates are
+      relevant.
     </p>
 
     <div class="table-container">
@@ -436,21 +440,30 @@
 
     <h4 class="title is-5">Human-calibrated validation</h4>
     <p>
-      We complement the mined benchmark with a human-calibrated, LLM-validated <b>silver test set</b> of 17,579 queries
-      (7,327 SPECIFY, 9,668 ADDRESS, 584 BROADEN).
-      For each relation we write 4&ndash;6 candidate validation prompts and keep the two that best match expert
-      judgments (F1 of .83&ndash;.84 for ADDRESS, .86&ndash;.87 for SPECIFY, .76 for BROADEN, against 300 expert annotations);
-      inter-annotator F1 among five experts is .87 / .90 / .82. A pair is kept only if both prompts accept it.
-      We further validate <b>top-10 retrieved candidates</b> to account for false negatives.
+      Mined pairs are noisy: a marker can appear even when the query is not understandable on its own or the gold
+      sentence realizes the move poorly. Our primary evaluation set is therefore a <b>silver test set</b> of 17,579
+      queries (7,327 SPECIFY, 9,668 ADDRESS, 584 BROADEN), filtered by an LLM judge (GPT-5.4). For each move we
+      wrote 4&ndash;6 prompt variants and kept the two that best matched human labels on 100 pairs; a pair is kept
+      only if both prompts accept it. On 60 held-out pairs per move labeled by five annotators, the selected prompts
+      agree with an individual annotator at a mean F1 of .87&ndash;.91 (SPECIFY), .73&ndash;.76 (ADDRESS), and
+      .75&ndash;.81 (BROADEN); the annotators agree with one another at .90, .87, and .82.
+      Because the silver set credits only the mined gold sentence, researchers further evaluate the
+      <b>top-10 retrieved candidates</b> as inspirations (<a href="#human-eval">human evaluation</a>).
     </p>
 
-    <h3 class="title is-4">Move-specific fine-tuning helps a lot &mdash; but the task is far from solved</h3>
+    <h3 class="title is-4">Off-the-shelf retrievers miss the moves; move-specific fine-tuning helps a lot</h3>
     <p>
-      We evaluate BM25 and three dense retrievers (all-mpnet-base-v2, ModernBERT-embed-large, Stella-en-1.5B-v5),
-      each as a pre-trained baseline and after relation-specific contrastive fine-tuning. Baseline pre-trained
-      models provide limited gains over BM25, whereas move-specific fine-tuning yields substantial improvements,
-      increasing MRR@10 by <b>1.6&times;&ndash;2.4&times;</b> for ModernBERT-embed-large. ModernBERT-embed-large is the strongest model
-      on every operation:
+      We fine-tune three dense retrievers (all-mpnet-base-v2, ModernBERT-embed-large, Stella-en-1.5B-v5), one per
+      move, with a contrastive loss, and compare each with its pre-trained baseline and with BM25. We also evaluate
+      six pre-trained retrievers without fine-tuning: EmbeddingGemma-300m, Qwen3-Embedding-0.6B, ReasonIR-8B
+      (trained for reasoning-intensive retrieval), and three late-interaction models (answerai-colbert-small-v1,
+      GTE-ModernColBERT-v1, Reason-ModernColBERT). Finally, GPT-5-mini reranks the top 100 candidates.
+    </p>
+    <p>
+      Without fine-tuning, the best retriever for each move exceeds BM25 by only 12.0 (SPECIFY), 3.8 (ADDRESS), and
+      7.7 (BROADEN) MRR@10 points, and some score below BM25. Fine-tuning ModernBERT-embed-large multiplies its
+      MRR@10 by <b>1.7&times;, 2.4&times;, and 1.6&times;</b>, making it the strongest retriever on every move. Even
+      so, it ranks the gold sentence in its top 10 for only 40.0% of ADDRESS and 41.4% of BROADEN queries.
     </p>
 
     <div class="table-container">
@@ -471,6 +484,12 @@
             <td class="has-text-centered">10.9</td>
           </tr>
           <tr>
+            <td>Best pre-trained retriever</td>
+            <td class="has-text-centered">29.6 <small>(ReasonIR-8B)</small></td>
+            <td class="has-text-centered">12.1 <small>(ReasonIR-8B)</small></td>
+            <td class="has-text-centered">18.6 <small>(Stella)</small></td>
+          </tr>
+          <tr>
             <td>ModernBERT-embed-large &mdash; baseline</td>
             <td class="has-text-centered">26.7</td>
             <td class="has-text-centered">10.2</td>
@@ -482,38 +501,143 @@
             <td class="has-text-centered"><b>24.5</b></td>
             <td class="has-text-centered"><b>27.3</b></td>
           </tr>
+          <tr>
+            <td>ModernBERT-embed-large &mdash; fine-tuned + GPT-5-mini rerank</td>
+            <td class="has-text-centered">55.1</td>
+            <td class="has-text-centered">37.7</td>
+            <td class="has-text-centered">28.2</td>
+          </tr>
         </tbody>
       </table>
     </div>
     <p class="fig-caption">
-      Headline results on the silver test set (recommended-prefix setup; full tables for all models, setups, and
-      metrics in the paper). Even the best model fails for most ADDRESS and BROADEN queries, and MRR@100 exceeds
-      MRR@10 by at most 0.8 points&mdash;failures are not near-hits.
+      Headline results on the silver test set. Full tables for all 12 retrievers, setups, and metrics, and for the unfiltered test set, are in the paper.
     </p>
 
-    <h3 class="title is-4">The mined positive is not the only valid inspiration</h3>
+    <h4 class="title is-5">LLM reranking adds further gains</h4>
     <p>
-      One gold per query makes every number a <b>floor</b>: with 404,371 candidates, the corpus almost certainly
-      holds other valid answers the single mined gold misses. To measure what fine-tuning actually learned, we judge
-      each of the top-10 retrieved candidates independently with human-calibrated LLM prompts (400 queries per
-      relation, 24K judged pairs). After fine-tuning, at least one accepted candidate appears in the top 10 for
-      <b>89.0%</b> of SPECIFY and <b>76.5%</b> of ADDRESS queries (hard agreement: both prompts accept), with
-      accepted candidates per ADDRESS list rising from 0.61 to 1.67.
+      Reranking helps all three fine-tuned retrievers, adding 8.4 to 15.5 MRR@10 points on SPECIFY and ADDRESS.
+      Fine-tuning and reranking are complementary: for ModernBERT-embed-large, together they add 28.4 (SPECIFY) and
+      27.5 (ADDRESS) points over the baseline, well above either alone. First-stage recall bounds the gains: the
+      fine-tuned retriever places the gold sentence in its top 100 for 80.8%, 61.3%, and 57.2% of SPECIFY, ADDRESS,
+      and BROADEN queries.
     </p>
+
+    <h4 class="title is-5">The gains are not shortcuts</h4>
     <p>
-      On tuned ADDRESS, for 41.2% of queries the gold is not ranked in the top 10 yet the judge accepts an
-      alternative candidate; counting any accepted candidate raises ADDRESS MRR@10 from 24.5 to 41.2.
-      These discovered positives overlap lexically with the query <em>less</em> than the mined positives do,
-      and <b>88&ndash;90%</b> of all accepted candidates come from papers other than the query's&mdash;tuned
-      retrievers surface valid solution directions from the broader literature, i.e., inspiration in the intended
-      sense, rather than exploiting adjacency or other shallow shortcuts.
+      <b>Not style.</b> When the pool is restricted to gold sentences of the requested move, so that every candidate
+      has that move's style, fine-tuning still adds 22.1, 19.4, and 14.8 MRR@10 points on SPECIFY, ADDRESS, and
+      BROADEN. <b>Not lexical matching.</b> In all 24 comparisons (four cutoffs, three moves, two test sets), the
+      fine-tuned retriever's top-<i>k</i> candidates share fewer words with the query than the baseline's do.
+      <b>Not a generic next-sentence skill.</b> On SPECIFY and ADDRESS queries, each retriever scores best when
+      fine-tuned on that move.
     </p>
 
     <img src="static/images/jaccard_all_groups.png" alt="Query-candidate lexical overlap by relation over retrieval depth" style="width: 100%; max-width: 640px; display: block; margin: 1.25rem auto;">
     <p class="fig-caption">
-      Query&ndash;candidate lexical overlap by relation, over retrieval depth on the silver test set
-      (ModernBERT-embed-large). Lexical overlap is Jaccard score with unigrams, stopwords removed,
-      snowball-stemmed. Tuned retrieval pulls lower-overlap candidates than the off-the-shelf baseline.
+      Mean lexical overlap between a silver query and its top-<i>k</i> candidates, for ModernBERT-embed-large before
+      (baseline) and after (trained) fine-tuning on each move. Overlap is the Jaccard similarity of unigrams after
+      stopword removal and stemming.
+    </p>
+
+    <h3 class="title is-4" id="human-eval">Researchers find more useful inspirations after fine-tuning</h3>
+    <p>
+      The silver metrics credit only the gold sentence, so other useful sentences in the pool count as wrong. We
+      therefore asked researchers to judge the retrieved candidates as inspirations. Five computer science graduate
+      students, each with at least one publication, labeled 125 silver queries from their own subfields
+      (39 SPECIFY, 40 ADDRESS, 46 BROADEN). For each query, they saw the top 10 of ModernBERT-embed-large before and
+      after fine-tuning as two shuffled, unlabeled lists, marked each candidate as useful or not, and chose the more
+      useful list.
+    </p>
+
+    <div class="columns has-text-centered">
+      <div class="column">
+        <div class="stat-number">47.6 &rarr; 81.2</div>
+        <div class="stat-label">HR@10: queries with a useful candidate in the top 10 (%)</div>
+      </div>
+      <div class="column">
+        <div class="stat-number">81 vs. 15</div>
+        <div class="stat-label">annotations preferring the fine-tuned vs. baseline list (35 ties)</div>
+      </div>
+      <div class="column">
+        <div class="stat-number">91.7%</div>
+        <div class="stat-label">of useful non-gold candidates come from other papers</div>
+      </div>
+    </div>
+
+    <div class="table-container">
+      <table class="table is-bordered is-striped is-narrow is-fullwidth results">
+        <thead>
+          <tr>
+            <th>Move (queries)</th>
+            <th>Setup</th>
+            <th class="has-text-centered">HR@10</th>
+            <th class="has-text-centered">P@10</th>
+            <th class="has-text-centered">MRR@10</th>
+            <th class="has-text-centered">Preferred</th>
+            <th class="has-text-centered">Tie</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td rowspan="2">SPECIFY (39)</td>
+            <td>Baseline</td>
+            <td class="has-text-centered">50.0</td><td class="has-text-centered">12.7</td><td class="has-text-centered">37.4</td><td class="has-text-centered">3</td>
+            <td rowspan="2" class="has-text-centered">10</td>
+          </tr>
+          <tr>
+            <td>Tuned</td>
+            <td class="has-text-centered"><b>87.2</b></td><td class="has-text-centered"><b>20.6</b></td><td class="has-text-centered"><b>63.9</b></td><td class="has-text-centered"><b>29</b></td>
+          </tr>
+          <tr>
+            <td rowspan="2">ADDRESS (40)</td>
+            <td>Baseline</td>
+            <td class="has-text-centered">42.5</td><td class="has-text-centered">7.0</td><td class="has-text-centered">21.7</td><td class="has-text-centered">4</td>
+            <td rowspan="2" class="has-text-centered">7</td>
+          </tr>
+          <tr>
+            <td>Tuned</td>
+            <td class="has-text-centered"><b>85.0</b></td><td class="has-text-centered"><b>19.5</b></td><td class="has-text-centered"><b>42.3</b></td><td class="has-text-centered"><b>30</b></td>
+          </tr>
+          <tr>
+            <td rowspan="2">BROADEN (46)</td>
+            <td>Baseline</td>
+            <td class="has-text-centered">50.0</td><td class="has-text-centered">9.3</td><td class="has-text-centered">36.8</td><td class="has-text-centered">8</td>
+            <td rowspan="2" class="has-text-centered">18</td>
+          </tr>
+          <tr>
+            <td>Tuned</td>
+            <td class="has-text-centered"><b>72.8</b></td><td class="has-text-centered"><b>16.0</b></td><td class="has-text-centered"><b>49.5</b></td><td class="has-text-centered"><b>22</b></td>
+          </tr>
+          <tr>
+            <td rowspan="2"><b>All (125)</b></td>
+            <td>Baseline</td>
+            <td class="has-text-centered">47.6</td><td class="has-text-centered">9.6</td><td class="has-text-centered">32.1</td><td class="has-text-centered">15</td>
+            <td rowspan="2" class="has-text-centered">35</td>
+          </tr>
+          <tr>
+            <td>Tuned</td>
+            <td class="has-text-centered"><b>81.2</b></td><td class="has-text-centered"><b>18.6</b></td><td class="has-text-centered"><b>51.7</b></td><td class="has-text-centered"><b>81</b></td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+    <p class="fig-caption">
+      Human inspiration evaluation of the top 10 of ModernBERT-embed-large before (Baseline) and after (Tuned)
+      fine-tuning (%). A candidate counts as relevant if the annotator marked it useful. All differences in HR, P,
+      and MRR are significant (<i>p</i>&nbsp;&lt;&nbsp;.01, paired permutation test). Preferred: annotations that
+      chose the list; Tie: annotations that preferred neither.
+    </p>
+
+    <h4 class="title is-5">Inspirations beyond the gold sentence</h4>
+    <p>
+      Annotators marked the gold sentence useful in 96.5% of the cases in which it appeared in the fine-tuned top 10,
+      which supports the silver labels. Most useful candidates, however, are not the gold sentence. For 64.8% of
+      queries, the fine-tuned top 10 contains a useful candidate other than the gold (42.0% for the baseline), and
+      91.7% of these come from a paper other than the query's; the 180 such candidates come from 176 distinct papers.
+      Counting every useful candidate, the fine-tuned retriever reaches MRR@10 of 51.7, against 27.1 with the gold
+      sentence alone. Silver scores are therefore a floor: the fine-tuned retriever finds inspirations across the
+      literature, beyond the sentence that follows the query in its own paper.
     </p>
 
   </div>
@@ -548,7 +672,6 @@
             This website is licensed under a
             <a rel="license" href="http://creativecommons.org/licenses/by-sa/4.0/">Creative Commons Attribution-ShareAlike 4.0 International License</a>.
           </p>
-          <!-- TODO: add web analytics snippet if desired -->
         </div>
       </div>
     </div>
